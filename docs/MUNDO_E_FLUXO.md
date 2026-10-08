@@ -18,9 +18,18 @@ Confirmado pelo usuário em 2026-10-08.
 2. Chega um trecho em que o jogador **precisa fugir rápido** da Névoa até o próximo degrau.
 3. Essa fuga é a forma de ligar a história ao próximo degrau.
 
-## Perguntas em aberto (para decidir antes de implementar a fuga)
-- **Duração da fuga:** tempo fixo, ou distância até a saída?
-- **Se a Névoa alcançar a formiga:** volta ao formigueiro, ou reinicia a fuga do começo do trecho?
+## Dificuldade da fuga (decidido)
+- A fuga da Névoa **fica mais difícil a cada degrau**, porque a montanha sobe e os biomas mudam (cada degrau é um bioma mais hostil).
+- Regra: quanto mais alto o degrau, menos tempo ou mais obstáculos na fuga. Os números exatos ficam para a fase de balanceamento.
+
+## Game over e pontos de save (decidido)
+- Se a Névoa pegar a formiga: **game over**, como em Zelda. A formiga volta do **último ponto de save**.
+- **Monólitos de save:** pontos espalhados pelo mundo (tronco, cristal ou similar; o formato exato será definido em arte). Ao tocar, o jogo salva e mostra uma confirmação.
+- O formigueiro é o centro do mundo, mas o respawn é no último save, não obrigatoriamente no formigueiro.
+
+## Pendências (pouco urgentes)
+- Forma exata do monólito (tronco, cristal ou outro): decidir quando formos para arte.
+- Números da fuga por degrau: definir na fase de balanceamento.
 
 ## Itens e progressão
 - Continuam valendo: a única progressão é a vida máxima em corações, e os itens ampliam ações.
