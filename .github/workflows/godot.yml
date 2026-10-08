@@ -15,7 +15,7 @@ jobs:
     name: Teste de fumaça
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Baixar Godot (headless)
         run: |
           curl -fsSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
@@ -27,7 +27,13 @@ jobs:
           ./godot --headless --path . --import || true
           ./godot --headless --path . --import || true
       - name: Rodar teste de fumaça
-        run: ./godot --headless --path . --script res://tests/smoke_test.gd
+        run: |
+          set +e
+          ./godot --headless --path . --script res://tests/smoke_test.gd > smoke.txt 2>&1
+          RC=$?
+          cat smoke.txt
+          grep -E "ERROR|SCRIPT|Parse|Invalid|FALHA|Error|error" smoke.txt | head -40 | sed 's/^/::error::/'
+          exit $RC
       - name: Validar mapas
         run: |
           python3 -m pip install --quiet pillow
@@ -38,9 +44,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
@@ -95,7 +101,12 @@ jobs:
       - name: Build Android (APK de teste)
         run: |
           mkdir -p build/android
-          ./godot --headless --path . --export-debug "Android" build/android/Mnemos2.apk
+          set +e
+          ./godot --headless --path . --export-debug "Android" build/android/Mnemos2.apk > android.txt 2>&1
+          RC=$?
+          cat android.txt
+          grep -E "ERROR|Error|error|fail|Fail|not found|missing|SDK|sdk" android.txt | head -40 | sed 's/^/::error::/'
+          exit $RC
           cp build/android/Mnemos2.apk Mnemos2-android.apk
 
       - name: Enviar Windows
