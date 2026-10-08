@@ -1,6 +1,7 @@
 # Teste de fumaça: carrega dados, mapas e cenas e roda alguns quadros do jogo.
-# Execução (CI): godot --headless --path . --script res://tests/smoke_test.gd
-extends SceneTree
+# Execução (CI): godot --headless --path . res://tests/smoke_test.tscn
+# (roda como cena para que os autoloads, como Game, já existam ao compilar.)
+extends Node
 
 const Zones = preload("res://scripts/zones.gd")
 const Mundo = preload("res://scripts/world.gd")
@@ -17,7 +18,7 @@ func check(cond: bool, msg: String) -> void:
 		falhas += 1
 
 
-func _init() -> void:
+func _ready() -> void:
 	print("Mnemos 2.0 — smoke test")
 	check(Zones.DATA.size() == 7, "7 degraus carregados")
 	for i in range(Zones.DATA.size()):
@@ -33,7 +34,7 @@ func _init() -> void:
 			"degrau %d: tem P, M e N" % (i + 1))
 
 	var mundo = Mundo.new()
-	get_root().add_child(mundo)
+	get_tree().root.add_child(mundo)
 	mundo.load_map(Zones.DATA[0]["map"], "~")
 	check(not mundo.walkable_char("~"), "abismo bloqueia sem o fio de seda")
 	mundo.unlocked["seda"] = true
@@ -44,7 +45,7 @@ func _init() -> void:
 	check(FileAccess.file_exists("res://assets/fonts/KiwiSoda.ttf"), "fonte KiwiSoda presente")
 
 	var principal = Principal.new()
-	get_root().add_child(principal)
+	get_tree().root.add_child(principal)
 	for _i in range(30):
 		principal._process(1.0 / 60.0)
 	check(principal.mode == "title", "começa no título")
@@ -68,4 +69,4 @@ func _init() -> void:
 		print("RESULTADO: OK")
 	else:
 		print("RESULTADO: %d falha(s)" % falhas)
-	quit(1 if falhas > 0 else 0)
+	get_tree().quit(1 if falhas > 0 else 0)

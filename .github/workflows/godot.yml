@@ -29,7 +29,7 @@ jobs:
       - name: Rodar teste de fumaça
         run: |
           set +e
-          ./godot --headless --path . --script res://tests/smoke_test.gd > smoke.txt 2>&1
+          ./godot --headless --path . res://tests/smoke_test.tscn > smoke.txt 2>&1
           RC=$?
           cat smoke.txt
           grep -E "ERROR|SCRIPT|Parse|Invalid|FALHA|Error|error" smoke.txt | head -40 | sed 's/^/::error::/'
@@ -105,7 +105,7 @@ jobs:
           ./godot --headless --path . --export-debug "Android" build/android/Mnemos2.apk > android.txt 2>&1
           RC=$?
           cat android.txt
-          grep -E "ERROR|Error|error|fail|Fail|not found|missing|SDK|sdk" android.txt | head -40 | sed 's/^/::error::/'
+          tail -40 android.txt | sed 's/^/::error::/'
           exit $RC
           cp build/android/Mnemos2.apk Mnemos2-android.apk
 
