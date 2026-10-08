@@ -1,6 +1,6 @@
 # Ajudantes e habilidades — PROPOSTA (pendente de aprovação)
 
-Status: **proposto**. Nomes e habilidades abaixo são provisórios e **não estão aprovados**. Regra: um ajudante ativo por vez; cada um tem dungeon própria; habilidade é ação (nunca estatística); todo controle novo tem equivalente de toque com 44 pt.
+Status: **aprovado em 2026-10-08** (nomes e habilidades mantidos; ordem de recrutamento livre). Dungeons de ajudante ainda são propostas. Regra: um ajudante ativo por vez; cada um tem dungeon própria; habilidade é ação (nunca estatística); todo controle novo tem equivalente de toque com 44 pt.
 
 | Ajudante (provisório) | Habilidade proposta | Usa para | Dungeon própria (proposta) |
 |---|---|---|---|

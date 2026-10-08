@@ -71,7 +71,8 @@ Decisões confirmadas em 2026-10-08 (pelo usuário):
 |---|---|---|
 | Mundo | Mundo aberto único, estilo Zelda I; 7 degraus viram regiões | ⬜ a implementar |
 | Dungeons | 1 principal por degrau (obrigatória para subir); 5 opcionais; 1 por ajudante | ⬜ |
-| Ajudantes | Uma habilidade por ajudante, um ativo por vez | 🟡 proposta em [AJUDANTES_PROPOSTA.md](AJUDANTES_PROPOSTA.md), aguarda aprovação |
+| Ajudantes | Uma habilidade por ajudante, um ativo por vez; ordem de recrutamento livre | ✅ aprovado ([AJUDANTES_PROPOSTA.md](AJUDANTES_PROPOSTA.md)) |
+| Fluxo | Formigueiro no centro; Névoa consome o degrau após a dungeon principal; fuga para o próximo | 🟡 decidido ([MUNDO_E_FLUXO.md](MUNDO_E_FLUXO.md)); duração e regra de captura em aberto |
 | Combate | Polir combate contra inimigos e chefes (esquiva, empurrão, feedback, avisos) | ⬜ |
 | Visual | Imagem sem desfoque: escala inteira do Godot | 🟡 implementado (aguarda teste) |
 | Visual | Cor própria por degrau (provisória) | 🟡 implementado (aguarda teste) |
