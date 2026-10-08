@@ -4,7 +4,7 @@
 
 - Campanha de 7 degraus implementada em GDScript (Godot 4.4.1): título/continuar, mapas, baús com item-chave, portões, chefes, ajudante único, corações, diálogos e final.
 - Mapas validados por `tools/validate_zones.py` (alcance com os itens de cada degrau).
-- **Não testado no motor ainda.** A sandbox não consegue baixar o Godot nem os export templates. A primeira execução real acontece no GitHub Actions (`.github/workflows/godot.yml`).
+- Teste de fumaça (`tests/smoke_test.tscn`) passa na CI. As builds ainda não foram jogadas: o teste de jogo é manual.
 - Builds Windows e Android: geradas pela CI do GitHub (`.github/workflows/godot.yml`) a cada push. Ver "Baixar as builds" abaixo.
 
 ## Baixar as builds (para testar)
