@@ -10,6 +10,7 @@ var height := 0
 var gate := ""
 var unlocked := {}   # itens obtidos + "porta" quando o chefe cai
 var tex_atlas: Texture2D = null
+var tint := Color(1, 1, 1)   # cor do degrau (cada degrau tem paleta própria)
 
 
 func _ready() -> void:
@@ -110,7 +111,7 @@ func _draw() -> void:
 			var idx := tile_index(char_at(x, y))
 			draw_texture_rect_region(tex_atlas,
 				Rect2(x * TS, y * TS, TS, TS),
-				Rect2(idx * TS, 0, TS, TS))
+				Rect2(idx * TS, 0, TS, TS), tint)
 
 
 func redraw() -> void:

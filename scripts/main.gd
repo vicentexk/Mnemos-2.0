@@ -160,9 +160,22 @@ func _clear_entities() -> void:
 	ally_node = null
 
 
+# Paleta por degrau: cada região tem tom próprio (provisório, até a arte final).
+const TINTS := [
+	Color(1.00, 1.00, 1.00),  # 1 planície: natural
+	Color(1.00, 0.88, 0.55),  # 2 duna: areia
+	Color(0.70, 0.90, 0.70),  # 3 samambaias: verde úmido
+	Color(0.85, 0.70, 1.00),  # 4 névoa roxa
+	Color(0.75, 0.90, 1.00),  # 5 gelo azulado
+	Color(1.00, 0.70, 0.60),  # 6 terra vermelha
+	Color(0.85, 0.85, 0.85),  # 7 Pálida: cinza
+]
+
+
 func _build_zone() -> void:
 	_clear_entities()
 	var d: Dictionary = Zones.DATA[zone]
+	world.tint = TINTS[zone % TINTS.size()]
 	world.unlocked = {}
 	for k in Game.items.keys():
 		world.unlocked[k] = true
