@@ -19,6 +19,10 @@ func check(cond: bool, msg: String) -> void:
 
 
 func _ready() -> void:
+	_executar.call_deferred()
+
+
+func _executar() -> void:
 	print("Mnemos 2.0 — smoke test")
 	check(Zones.DATA.size() == 7, "7 degraus carregados")
 	for i in range(Zones.DATA.size()):

@@ -102,10 +102,16 @@ func load_game() -> bool:
 func load_tex(path: String) -> Texture2D:
 	if _tex_cache.has(path):
 		return _tex_cache[path]
-	var img := Image.load_from_file(path)
-	if img == null:
+	var tex: Texture2D = null
+	if ResourceLoader.exists(path):
+		tex = load(path) as Texture2D
+	else:
+		# Fallback para arquivos fora do import (ex.: edição sem reimportar).
+		var img := Image.load_from_file(path)
+		if img != null:
+			tex = ImageTexture.create_from_image(img)
+	if tex == null:
 		push_error("Imagem não encontrada: " + path)
 		return null
-	var tex := ImageTexture.create_from_image(img)
 	_tex_cache[path] = tex
 	return tex
