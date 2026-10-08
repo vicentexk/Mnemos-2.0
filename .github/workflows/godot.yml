@@ -29,10 +29,10 @@ jobs:
       - name: Rodar teste de fumaça
         run: |
           set +e
-          ./godot --headless --path . res://tests/smoke_test.tscn > smoke.txt 2>&1
+          timeout 300 ./godot --headless --path . res://tests/smoke_test.tscn > smoke.txt 2>&1
           RC=$?
           cat smoke.txt
-          grep -E "ERROR|SCRIPT|Parse|Invalid|FALHA|Error|error" smoke.txt | head -40 | sed 's/^/::error::/'
+          grep -v "first_scan\|^\s*$" smoke.txt | tail -60 | sed 's/^/::error::/'
           exit $RC
       - name: Validar mapas
         run: |
@@ -105,7 +105,7 @@ jobs:
           ./godot --headless --path . --export-debug "Android" build/android/Mnemos2.apk > android.txt 2>&1
           RC=$?
           cat android.txt
-          tail -40 android.txt | sed 's/^/::error::/'
+          grep -v "first_scan\|^\s*$" android.txt | tail -60 | sed 's/^/::error::/'
           exit $RC
           cp build/android/Mnemos2.apk Mnemos2-android.apk
 
