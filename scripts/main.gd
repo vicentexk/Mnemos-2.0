@@ -27,6 +27,7 @@ var menu_actions: Array = []
 
 
 func _ready() -> void:
+	print("[main] _ready")
 	world = WorldScript.new()
 	add_child(world)
 	entities = Node2D.new()
@@ -45,6 +46,7 @@ func _ready() -> void:
 	hud = HudScript.new()
 	tela.add_child(hud)
 
+	print("[main] hud criado: %s" % str(hud != null))
 	var toque := CanvasLayer.new()
 	add_child(toque)
 	toque.add_child(TouchScript.new())
@@ -53,6 +55,8 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if hud == null:
+		return
 	if mode == "title":
 		_title_input()
 		return
