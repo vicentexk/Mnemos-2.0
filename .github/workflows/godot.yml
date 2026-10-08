@@ -28,12 +28,7 @@ jobs:
           ./godot --headless --path . --import || true
       - name: Rodar teste de fumaça
         run: |
-          set +e
-          timeout 300 ./godot --headless --verbose --path . res://tests/smoke_test.tscn > smoke.txt 2>&1
-          RC=$?
-          cat smoke.txt
-          python3 tools/ci_resumo.py smoke.txt
-          exit $RC
+          timeout 300 ./godot --headless --path . res://tests/smoke_test.tscn
       - name: Validar mapas
         run: |
           python3 -m pip install --quiet pillow
@@ -101,12 +96,8 @@ jobs:
       - name: Build Android (APK de teste)
         run: |
           mkdir -p build/android
-          set +e
-          ./godot --headless --verbose --path . --export-debug "Android" build/android/Mnemos2.apk > android.txt 2>&1
-          RC=$?
-          cat android.txt
-          python3 tools/ci_resumo.py android.txt
-          exit $RC
+          ./godot --headless --path . --export-debug "Android" build/android/Mnemos2.apk
+          ls -la build/android
           cp build/android/Mnemos2.apk Mnemos2-android.apk
 
       - name: Enviar Windows
