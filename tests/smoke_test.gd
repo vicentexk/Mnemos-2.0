@@ -67,6 +67,22 @@ func _executar() -> void:
 	for _i in range(60):
 		principal._process(1.0 / 60.0)
 
+	# Monólito de save no degrau 1 e ponto de retorno que sobrevive ao save.
+	var txt1 := ""
+	for l in Zones.DATA[0]["map"]:
+		txt1 += str(l)
+	check(txt1.count("S") == 1, "degrau 1 tem um monólito de save")
+	Game.reset_new_game()
+	Game.set_checkpoint(2, Vector2(100, 50))
+	Game.save_game()
+	Game.cp_zone = -1
+	Game.load_game()
+	check(Game.cp_zone == 2 and Game.cp_pos == Vector2(100, 50), "checkpoint volta do save")
+
+	# Cutscene inicial: começa no modo cutscene, depois do título.
+	principal._start_cutscene()
+	check(principal.mode == "cutscene", "novo jogo abre a cutscene")
+
 	Game.reset_new_game()
 	print("")
 	if falhas == 0:

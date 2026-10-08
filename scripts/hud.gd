@@ -12,6 +12,8 @@ var max_hearts := 3
 var message := ""
 var message_time := 0.0
 var ending_lines: Array = []
+var cutscene_lines: Array = []
+var cutscene_index := 0
 var font: Font = null
 var tex_full: Texture2D = null
 var tex_empty: Texture2D = null
@@ -65,6 +67,8 @@ func _draw() -> void:
 		_draw_title()
 	elif mode == "ending":
 		_draw_ending()
+	elif mode == "cutscene":
+		_draw_cutscene()
 	else:
 		_draw_play()
 
@@ -94,6 +98,19 @@ func _draw_title() -> void:
 		var prefixo := "> " if i == menu_index else "  "
 		draw_string(font, Vector2(0, 116 + i * 14), prefixo + menu[i], HORIZONTAL_ALIGNMENT_CENTER, 320, 10, cor)
 	draw_string(font, Vector2(0, 170), "Setas/WASD: andar   J/Z: atacar   K/X/Espaço: esquivar   E/Enter: falar", HORIZONTAL_ALIGNMENT_CENTER, 320, 6, Color(0.6, 0.6, 0.6))
+
+
+func _draw_cutscene() -> void:
+	draw_rect(Rect2(0, 0, 320, 180), Color(0.03, 0.04, 0.06))
+	# Faixas de "letterbox" de cinema.
+	draw_rect(Rect2(0, 0, 320, 14), Color(0, 0, 0))
+	draw_rect(Rect2(0, 166, 320, 14), Color(0, 0, 0))
+	if cutscene_index < cutscene_lines.size():
+		draw_multiline_string(font, Vector2(24, 62), str(cutscene_lines[cutscene_index]),
+			HORIZONTAL_ALIGNMENT_CENTER, 272, 10, -1, Color(0.92, 0.94, 0.85))
+	draw_string(font, Vector2(0, 160), "%d / %d" % [cutscene_index + 1, cutscene_lines.size()],
+		HORIZONTAL_ALIGNMENT_RIGHT, 300, 7, Color(0.6, 0.6, 0.6))
+	draw_string(font, Vector2(0, 176), "E ou J: continuar", HORIZONTAL_ALIGNMENT_CENTER, 320, 7, Color(0.7, 0.7, 0.5))
 
 
 func _draw_ending() -> void:

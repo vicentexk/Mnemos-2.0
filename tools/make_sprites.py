@@ -205,6 +205,18 @@ def chest(aberto):
     return img
 
 
+def monolith(ativo):
+    # Monólito de save: pedra escura com cristal (apagado ou aceso).
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    d.rectangle([4, 4, 11, 15], fill=(70, 74, 82, 255), outline=(24, 26, 30, 255))
+    d.rectangle([6, 6, 9, 13], fill=(96, 102, 112, 255))
+    cristal = (120, 240, 255, 255) if ativo else (60, 110, 130, 255)
+    d.rectangle([7, 1, 8, 3], fill=cristal)
+    d.point([(6, 2), (9, 2)], fill=cristal)
+    return img
+
+
 def main():
     ant = load_ant16()
     save(ant, "player/ant_player.png", "Protagonista (formiga) em jogo", "Reduzida da formiga aprovada")
@@ -249,6 +261,8 @@ def main():
          "7 gelo aberto,8 porta fechada,9 chão de pedra,10 areia aberta,11 parede de gelo,"
          "12 porta aberta,13 degraus de pedra")
 
+    save(monolith(False), "items/monolith_dormant.png", "Monólito de save apagado", "Placeholder")
+    save(monolith(True), "items/monolith_active.png", "Monólito de save aceso (último save)", "Placeholder")
     save(chest(False), "items/chest_closed.png", "Baú com item", "Placeholder")
     save(chest(True), "items/chest_open.png", "Baú aberto", "Placeholder")
     save(heart(16, True), "items/heart_container.png", "Recipiente de coração (aumenta a vida máxima)",

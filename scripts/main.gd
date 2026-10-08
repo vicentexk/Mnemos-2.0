@@ -24,6 +24,18 @@ var dialog_after: Callable = Callable()
 var ending_timer := -1.0
 var title_index := 0
 var menu_actions: Array = []
+var pending_spawn := Vector2(-1, -1)   # posição de retorno (monólito) para o próximo _build_zone
+var cutscene_index := 0
+
+# Cutscene inicial do modo história (texto original, pt-BR).
+const CUTSCENE := [
+	"Muito acima do formigueiro, uma montanha guarda o topo do mundo.",
+	"Há algum tempo, uma névoa cinza começou a descer pelas encostas. Onde ela passa, as cores somem.",
+	"A colônia precisa de alguém que suba até o topo e descubra de onde a névoa vem.",
+	"Você é uma formiga operária. Não é a mais forte, mas é a que mais observa.",
+	"Pelo caminho, outras formigas vão se juntar a você, cada uma com um jeito próprio de atravessar o mundo.",
+	"Volte ao formigueiro sempre que puder. E lembre: a névoa não espera.",
+]
 
 
 func _ready() -> void:
@@ -59,6 +71,13 @@ func _process(delta: float) -> void:
 		return
 	if mode == "title":
 		_title_input()
+		return
+	if mode == "cutscene":
+		if Input.is_action_just_pressed("talk") or Input.is_action_just_pressed("attack"):
+			cutscene_index += 1
+			hud.cutscene_index = cutscene_index
+			if cutscene_index >= CUTSCENE.size():
+				_start_zone(0)
 		return
 	if mode == "ending":
 		if Input.is_action_just_pressed("talk") or Input.is_action_just_pressed("attack"):
@@ -107,9 +126,27 @@ func _title_input() -> void:
 	if Input.is_action_just_pressed("attack") or Input.is_action_just_pressed("talk"):
 		if menu_actions[title_index] == "continuar":
 			Game.load_game()
+			# Continuar volta ao último monólito tocado (se houver).
+			if Game.cp_zone >= 0:
+				pending_spawn = Game.cp_pos
+				_start_zone(Game.cp_zone)
+			else:
+				_start_zone(Game.zone_index)
 		else:
 			Game.reset_new_game()
-		_start_zone(Game.zone_index)
+			_start_cutscene()
+
+
+func _start_cutscene() -> void:
+	mode = "cutscene"
+	hud.mode = "cutscene"
+	hud.cutscene_lines = CUTSCENE
+	hud.cutscene_index = 0
+	cutscene_index = 0
+	_clear_entities()
+	world.visible = false
+	player.visible = false
+	entities.visible = false
 
 
 func _show_ending() -> void:
@@ -133,6 +170,7 @@ func _show_ending() -> void:
 
 func _start_zone(i: int) -> void:
 	mode = "play"
+	hud.menu = []
 	hud.mode = "play"
 	zone = i
 	Game.zone_index = i
@@ -176,6 +214,8 @@ func _build_zone() -> void:
 	_clear_entities()
 	var d: Dictionary = Zones.DATA[zone]
 	world.tint = TINTS[zone % TINTS.size()]
+	var retorno := pending_spawn
+	pending_spawn = Vector2(-1, -1)
 	world.unlocked = {}
 	for k in Game.items.keys():
 		world.unlocked[k] = true
@@ -186,6 +226,8 @@ func _build_zone() -> void:
 	var ini: Vector2i = world.find_char("P")
 	if ini.x >= 0:
 		player.position = world.cell_center(ini)
+	if retorno.x >= 0.0:
+		player.position = retorno
 	player.can_move = true
 
 	camera.limit_left = 0
@@ -207,6 +249,8 @@ func _build_zone() -> void:
 				_spawn_heart(x, y, centro)
 			elif ch == "C":
 				_spawn_npc(centro)
+			elif ch == "S":
+				_spawn_save(centro)
 	_spawn_ally()
 
 
@@ -252,6 +296,18 @@ func _spawn_heart(x: int, y: int, centro: Vector2) -> void:
 	entities.add_child(it)
 	it.position = centro
 	it.setup("heart", k, self, player, "res://assets/sprites/items/heart_container.png")
+	it.triggered.connect(_on_interact)
+
+
+func _spawn_save(centro: Vector2) -> void:
+	var it = InteractableScript.new()
+	entities.add_child(it)
+	it.position = centro
+	it.setup("save", "save_%d" % zone, self, player, "res://assets/sprites/items/monolith_dormant.png")
+	# Aceso se for o último monólito salvo (o ponto de retorno fica logo abaixo dele).
+	var retorno := centro + Vector2(0, 14)
+	if Game.cp_zone == zone and Game.cp_pos.distance_to(retorno) < 1.0:
+		it.set_active(true)
 	it.triggered.connect(_on_interact)
 
 
@@ -302,6 +358,16 @@ func _on_interact(node) -> void:
 			"Ela segue você e ataca inimigos próximos."], Callable(self, "_after_recruit"))
 		node.remove_from_group("hurtable")
 		node.queue_free()
+	elif node.kind == "save":
+		var retorno: Vector2 = node.position + Vector2(0, 14)
+		Game.set_checkpoint(zone, retorno)
+		Game.hearts = Game.max_hearts
+		Game.save_game()
+		for c in entities.get_children():
+			if c.get("kind") == "save":
+				c.set_active(c == node)
+		hud.hearts = Game.hearts
+		show_message("Monólito ativado. Progresso salvo.")
 	elif node.kind == "heart":
 		Game.max_hearts += 1
 		Game.hearts = Game.max_hearts
@@ -330,9 +396,18 @@ func _on_boss_died() -> void:
 func on_player_hit() -> void:
 	hud.hearts = Game.hearts
 	if Game.hearts <= 0:
-		hud.show_message("A colônia recua... você volta ao início do degrau.", 3.0)
-		Game.hearts = Game.max_hearts
-		_start_zone(zone)
+		_game_over()
+
+
+# Game over estilo Zelda: volta ao último monólito tocado (ou ao início, se nenhum).
+func _game_over() -> void:
+	if Game.cp_zone >= 0:
+		pending_spawn = Game.cp_pos
+		_start_zone(Game.cp_zone)
+		show_message("A Névoa te alcançou. Você volta ao último monólito.")
+	else:
+		_start_zone(0)
+		show_message("A Névoa te alcançou. Você volta ao início.")
 
 
 func on_door_reached() -> void:

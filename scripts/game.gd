@@ -9,6 +9,9 @@ var hearts := 3
 var items := {}        # nome do item -> true (ex.: "seda")
 var flags := {}        # chave -> true (baús, inimigos e chefes derrotados, etc.)
 var active_ally := ""  # id do ajudante ativo (só um por vez)
+# Último monólito tocado (ponto de retorno ao morrer). cp_zone = -1 é "nenhum ainda".
+var cp_zone := -1
+var cp_pos := Vector2.ZERO
 var dialog_open := false
 
 var _tex_cache := {}
@@ -56,6 +59,19 @@ func reset_new_game() -> void:
 	items = {}
 	flags = {}
 	active_ally = ""
+	cp_zone = -1
+	cp_pos = Vector2.ZERO
+
+
+func set_checkpoint(zona: int, pos: Vector2) -> void:
+	cp_zone = zona
+	cp_pos = pos
+
+
+# Oscila entre 0 e -1 pixel inteiro (pixel art não aceita meio pixel).
+func bob_px(velocidade: float) -> float:
+	var t := Time.get_ticks_msec() / 1000.0
+	return -1.0 if int(t * velocidade) % 2 == 1 else 0.0
 
 
 func has_save() -> bool:
@@ -70,6 +86,9 @@ func save_game() -> void:
 		"items": items,
 		"flags": flags,
 		"active_ally": active_ally,
+		"cp_zone": cp_zone,
+		"cp_x": cp_pos.x,
+		"cp_y": cp_pos.y,
 	}
 	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if f == null:
@@ -95,6 +114,8 @@ func load_game() -> bool:
 	items = data.get("items", {})
 	flags = data.get("flags", {})
 	active_ally = str(data.get("active_ally", ""))
+	cp_zone = int(data.get("cp_zone", -1))
+	cp_pos = Vector2(float(data.get("cp_x", 0.0)), float(data.get("cp_y", 0.0)))
 	return true
 
 

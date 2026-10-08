@@ -40,6 +40,8 @@ func setup(w: Node2D, p: Node2D, m: Node2D, d: Dictionary, sprite_path: String) 
 
 
 func _process(delta: float) -> void:
+	if sprite != null:
+		sprite.position.y = Game.bob_px(3.0)
 	if dead or player == null:
 		return
 	flash = max(0.0, flash - delta)

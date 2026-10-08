@@ -14,10 +14,10 @@ ZONES_PATH = os.path.join(ROOT, "scripts/zones.gd")
 W, H = 40, 18
 GATE_X = (19, 20, 21)
 
-# Elementos por degrau: P (início), K (baú), C (ajudante), V (coração), M (chefe),
+# Elementos por degrau: P (início), S (monólito de save), K (baú), C (ajudante), V (coração), M (chefe),
 # e (inimigos), obst (paredes internas). Coordenadas (x, y).
 SPEC = [
-    dict(gate=True, P=(3, 8), K=(3, 2), C=(6, 9), V=(12, 5), M=(31, 8),
+    dict(gate=True, P=(3, 8), K=(3, 2), C=(6, 9), V=(12, 5), M=(31, 8), S=(8, 8),
          e=[(8, 5), (14, 11), (16, 3), (10, 14), (25, 3), (34, 14)],
          obst=[(10, 3), (6, 12), (7, 12), (15, 6), (24, 13), (34, 4)]),
     dict(gate=True, P=(3, 5), K=(2, 2), C=(4, 9), V=(14, 13), M=(31, 8),
@@ -60,7 +60,7 @@ def build(s):
         c[y][x] = "#"
     for x, y in s["e"]:
         c[y][x] = "e"
-    for k in ("K", "C", "V"):
+    for k in ("K", "C", "V", "S"):
         if s.get(k):
             x, y = s[k]
             c[y][x] = k

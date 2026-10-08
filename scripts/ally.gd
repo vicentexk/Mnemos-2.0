@@ -14,6 +14,8 @@ func setup(p: Node2D, sprite_path: String) -> void:
 
 
 func _process(delta: float) -> void:
+	if sprite != null:
+		sprite.position.y = Game.bob_px(4.0)
 	if player == null:
 		return
 	var alvo := player.position + Vector2(-12.0, 4.0)

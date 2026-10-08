@@ -26,6 +26,9 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if sprite != null:
+		var andando := Input.get_vector("move_left", "move_right", "move_up", "move_down") != Vector2.ZERO
+		sprite.position.y = Game.bob_px(8.0 if andando else 3.0)
 	attack_timer = max(0.0, attack_timer - delta)
 	dodge_cool = max(0.0, dodge_cool - delta)
 	dodge_timer = max(0.0, dodge_timer - delta)
