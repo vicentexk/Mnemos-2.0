@@ -113,3 +113,34 @@ jobs:
           name: Mnemos2-android-apk
           path: Mnemos2-android.apk
           if-no-files-found: error
+
+  publicar:
+    name: Publicar builds em apps/
+    # Só roda quando disparado manualmente (workflow_dispatch), para não versionar binários a cada push.
+    if: github.event_name == 'workflow_dispatch'
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Baixar builds
+        uses: actions/download-artifact@v4
+        with:
+          name: Mnemos2-windows
+          path: apps
+      - name: Baixar APK
+        uses: actions/download-artifact@v4
+        with:
+          name: Mnemos2-android-apk
+          path: apps
+      - name: Commit em apps/
+        run: |
+          ls -la apps
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f apps/
+          git commit -m "Builds de teste em apps/ (${GITHUB_SHA::7})"
+          git push origin HEAD:${{ github.ref_name }}

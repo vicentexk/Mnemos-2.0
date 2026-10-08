@@ -9,6 +9,14 @@
 
 ## Baixar as builds (para testar)
 
+As builds mais recentes publicadas ficam na pasta `apps/` do repositório:
+- `apps/Mnemos2-windows.zip` (contém `Mnemos2.exe`, executável sem instalador)
+- `apps/Mnemos2-android.apk`
+
+As builds são geradas pela CI e copiadas para `apps/` só quando a publicação é disparada manualmente.
+
+Alternativa: os artefatos de cada execução da CI na aba Actions.
+
 1. Abrir a aba **Actions** do repositório no GitHub e escolher a execução mais recente da branch `arena/30d8e357-mnemos-2-0`.
 2. Na parte de baixo da página, em **Artifacts**, baixar:
    - `Mnemos2-windows` (zip com `Mnemos2.exe`): descompactar e abrir o exe.
