@@ -5,7 +5,16 @@
 - Campanha de 7 degraus implementada em GDScript (Godot 4.4.1): título/continuar, mapas, baús com item-chave, portões, chefes, ajudante único, corações, diálogos e final.
 - Mapas validados por `tools/validate_zones.py` (alcance com os itens de cada degrau).
 - **Não testado no motor ainda.** A sandbox não consegue baixar o Godot nem os export templates. A primeira execução real acontece no GitHub Actions (`.github/workflows/godot.yml`).
-- Builds Windows e Android: pendentes do `export_presets.cfg` e dos segredos de assinatura (keystore) no GitHub.
+- Builds Windows e Android: geradas pela CI do GitHub (`.github/workflows/godot.yml`) a cada push. Ver "Baixar as builds" abaixo.
+
+## Baixar as builds (para testar)
+
+1. Abrir a aba **Actions** do repositório no GitHub e escolher a execução mais recente da branch `arena/30d8e357-mnemos-2-0`.
+2. Na parte de baixo da página, em **Artifacts**, baixar:
+   - `Mnemos2-windows` (zip com `Mnemos2.exe`): descompactar e abrir o exe.
+   - `Mnemos2-android-apk` (`Mnemos2-android.apk`): copiar para o celular e instalar. Pode ser preciso permitir instalação de fonte desconhecida.
+3. A APK é **assinada com uma chave de teste gerada a cada execução**. Por isso, uma build nova não instala por cima de outra: desinstale a anterior antes.
+4. Os artefatos ficam disponíveis pelo tempo de retenção padrão do GitHub. Não são uma release.
 
 ## Rodar no computador (Godot 4.4.1)
 
