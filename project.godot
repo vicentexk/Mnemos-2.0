@@ -1,0 +1,28 @@
+; Mnemos 2.0 — projeto Godot 4.4 (GDScript, sem C#)
+
+config_version=5
+
+[application]
+
+config/name="Mnemos 2.0"
+config/description="Aventura da Névoa. Título provisório."
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.4", "GL Compatibility")
+
+[autoload]
+
+Game="*res://scripts/game.gd"
+
+[display]
+
+window/size/viewport_width=320
+window/size/viewport_height=180
+window/size/window_width_override=960
+window/size/window_height_override=540
+window/stretch/mode="viewport"
+window/stretch/aspect="keep"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+textures/canvas_textures/default_texture_filter=0

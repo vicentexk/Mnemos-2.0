@@ -1,0 +1,47 @@
+# Sistema e editores
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*~
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Dependências e caches
+node_modules/
+__pycache__/
+.cache/
+.pytest_cache/
+
+# Builds e pacotes (gerados, nunca versionados)
+dist/
+build/
+out/
+release/
+*.apk
+*.aab
+*.exe
+*.msi
+*.zip
+
+# Segredos e logs
+.env
+.env.*
+*.log
+.signing/
+*.p12
+*.jks
+*.keystore
+
+# Originais de arte e áudio de alta resolução (ficam no workspace do Arena)
+assets/source/
+
+# Saves e dados de teste exportados
+saves/
+playtest/*.json
+
+# Godot (cache e importação gerados)
+.godot/
+*.import

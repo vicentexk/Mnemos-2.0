@@ -1,0 +1,113 @@
+name: Builds Godot
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: "4.4.1"
+  GODOT_STABLE: "4.4.1.stable"
+
+jobs:
+  smoke:
+    name: Teste de fumaça
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Baixar Godot (headless)
+        run: |
+          curl -fsSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot
+          chmod +x godot
+      - name: Importar recursos
+        run: |
+          ./godot --headless --path . --import || true
+          ./godot --headless --path . --import || true
+      - name: Rodar teste de fumaça
+        run: ./godot --headless --path . --script res://tests/smoke_test.gd
+      - name: Validar mapas
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 tools/validate_zones.py
+
+  build:
+    name: Build Windows e Android
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Baixar Godot e export templates
+        run: |
+          set -e
+          B="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable"
+          curl -fsSL -o godot.zip "$B/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot
+          chmod +x godot
+          curl -fsSL -o templates.tpz "$B/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          unzip -q templates.tpz -d tpz
+          DEST="$HOME/.local/share/godot/export_templates/${GODOT_STABLE}"
+          mkdir -p "$DEST"
+          cp -r tpz/templates/. "$DEST/"
+          ls "$DEST"
+
+      - name: Keystore de teste (Android)
+        run: |
+          keytool -genkeypair -v -keystore "$RUNNER_TEMP/debug.keystore" -storepass android \
+            -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US"
+          echo "GODOT_ANDROID_KEYSTORE_DEBUG_PATH=$RUNNER_TEMP/debug.keystore" >> "$GITHUB_ENV"
+          echo "GODOT_ANDROID_KEYSTORE_DEBUG_USER=androiddebugkey" >> "$GITHUB_ENV"
+          echo "GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD=android" >> "$GITHUB_ENV"
+
+      - name: Configurar SDK Android no Godot
+        run: |
+          mkdir -p "$HOME/.config/godot"
+          cat > "$HOME/.config/godot/editor_settings-4.4.tres" <<EOT
+          [gd_resource type="EditorSettings" format=3]
+
+          [resource]
+          export/android/android_sdk_path = "$ANDROID_HOME"
+          export/android/java_sdk_path = "$JAVA_HOME"
+          EOT
+          ls "$ANDROID_HOME/build-tools"
+
+      - name: Importar recursos
+        run: |
+          ./godot --headless --path . --import || true
+          ./godot --headless --path . --import || true
+
+      - name: Build Windows
+        run: |
+          mkdir -p build/windows
+          ./godot --headless --path . --export-release "Windows Desktop" build/windows/Mnemos2.exe
+          cd build/windows && zip -q -r ../../Mnemos2-windows.zip . && cd ../..
+
+      - name: Build Android (APK de teste)
+        run: |
+          mkdir -p build/android
+          ./godot --headless --path . --export-debug "Android" build/android/Mnemos2.apk
+          cp build/android/Mnemos2.apk Mnemos2-android.apk
+
+      - name: Enviar Windows
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mnemos2-windows
+          path: Mnemos2-windows.zip
+          if-no-files-found: error
+
+      - name: Enviar Android
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mnemos2-android-apk
+          path: Mnemos2-android.apk
+          if-no-files-found: error

@@ -1,0 +1,349 @@
+# Controlador principal: título, carregar degrau, criar inimigos/chefe/baús, diálogos e fim.
+extends Node2D
+
+const Zones = preload("res://scripts/zones.gd")
+const WorldScript = preload("res://scripts/world.gd")
+const PlayerScript = preload("res://scripts/player.gd")
+const EnemyScript = preload("res://scripts/enemy.gd")
+const BossScript = preload("res://scripts/boss.gd")
+const AllyScript = preload("res://scripts/ally.gd")
+const InteractableScript = preload("res://scripts/interactable.gd")
+const HudScript = preload("res://scripts/hud.gd")
+const TouchScript = preload("res://scripts/touch.gd")
+
+var world: Node2D = null
+var entities: Node2D = null
+var player: Node2D = null
+var camera: Camera2D = null
+var hud: Control = null
+var mode := "title"          # title, play, ending
+var zone := 0
+var boss_node: Node2D = null
+var ally_node: Node2D = null
+var dialog_after: Callable = Callable()
+var ending_timer := -1.0
+var title_index := 0
+var menu_actions: Array = []
+
+
+func _ready() -> void:
+	world = WorldScript.new()
+	add_child(world)
+	entities = Node2D.new()
+	add_child(entities)
+	player = PlayerScript.new()
+	player.world = world
+	player.main = self
+	add_child(player)
+	camera = Camera2D.new()
+	camera.position_smoothing_enabled = true
+	player.add_child(camera)
+	camera.make_current()
+
+	var tela := CanvasLayer.new()
+	add_child(tela)
+	hud = HudScript.new()
+	tela.add_child(hud)
+
+	var toque := CanvasLayer.new()
+	add_child(toque)
+	toque.add_child(TouchScript.new())
+
+	_open_title()
+
+
+func _process(delta: float) -> void:
+	if mode == "title":
+		_title_input()
+		return
+	if mode == "ending":
+		if Input.is_action_just_pressed("talk") or Input.is_action_just_pressed("attack"):
+			_open_title()
+		return
+	if hud.has_dialog():
+		if Input.is_action_just_pressed("talk") or Input.is_action_just_pressed("attack"):
+			if not hud.next_line():
+				_end_dialog()
+		return
+	if ending_timer > 0.0:
+		ending_timer -= delta
+		if ending_timer <= 0.0:
+			_show_ending()
+
+
+# ---------- título e fim ----------
+
+func _open_title() -> void:
+	mode = "title"
+	hud.mode = "title"
+	hud.lines = []
+	Game.dialog_open = false
+	_clear_entities()
+	world.visible = false
+	player.visible = false
+	entities.visible = false
+	menu_actions = []
+	var nomes: Array = []
+	if Game.has_save():
+		menu_actions.append("continuar")
+		nomes.append("CONTINUAR")
+	menu_actions.append("novo")
+	nomes.append("NOVO JOGO")
+	hud.menu = nomes
+	title_index = 0
+	hud.menu_index = 0
+
+
+func _title_input() -> void:
+	if Input.is_action_just_pressed("move_up"):
+		title_index = max(0, title_index - 1)
+	if Input.is_action_just_pressed("move_down"):
+		title_index = min(menu_actions.size() - 1, title_index + 1)
+	hud.menu_index = title_index
+	if Input.is_action_just_pressed("attack") or Input.is_action_just_pressed("talk"):
+		if menu_actions[title_index] == "continuar":
+			Game.load_game()
+		else:
+			Game.reset_new_game()
+		_start_zone(Game.zone_index)
+
+
+func _show_ending() -> void:
+	mode = "ending"
+	hud.mode = "ending"
+	hud.ending_lines = [
+		"A Névoa se desfaz como orvalho ao sol.",
+		"A colônia chega ao topo do mundo.",
+		"",
+		"Fim desta versão de teste.",
+		"Próximas etapas: ajudantes, segredos e dungeons opcionais.",
+	]
+	_clear_entities()
+	world.visible = false
+	player.visible = false
+	entities.visible = false
+	Game.save_game()
+
+
+# ---------- degraus ----------
+
+func _start_zone(i: int) -> void:
+	mode = "play"
+	hud.mode = "play"
+	zone = i
+	Game.zone_index = i
+	Game.hearts = Game.max_hearts
+	world.visible = true
+	player.visible = true
+	entities.visible = true
+	_build_zone()
+	hud.hearts = Game.hearts
+	hud.max_hearts = Game.max_hearts
+	hud.zone_name = str(Zones.DATA[i]["name"])
+	Game.save_game()
+	var chave_intro := "intro_%d" % i
+	if not Game.has_flag(chave_intro):
+		Game.set_flag(chave_intro)
+		_say(Zones.DATA[i]["intro"])
+
+
+func _clear_entities() -> void:
+	for c in entities.get_children():
+		if c.is_in_group("hurtable"):
+			c.remove_from_group("hurtable")
+		c.queue_free()
+	boss_node = null
+	ally_node = null
+
+
+func _build_zone() -> void:
+	_clear_entities()
+	var d: Dictionary = Zones.DATA[zone]
+	world.unlocked = {}
+	for k in Game.items.keys():
+		world.unlocked[k] = true
+	if Game.has_flag("chefe_" + str(d["boss"]["key"])):
+		world.unlocked["porta"] = true
+	world.load_map(d["map"], str(d["gate"]))
+
+	var ini: Vector2i = world.find_char("P")
+	if ini.x >= 0:
+		player.position = world.cell_center(ini)
+	player.can_move = true
+
+	camera.limit_left = 0
+	camera.limit_top = 0
+	camera.limit_right = world.width * 16
+	camera.limit_bottom = world.height * 16
+
+	for y in range(world.height):
+		for x in range(world.width):
+			var ch: String = world.char_at(x, y)
+			var centro: Vector2 = world.cell_center(Vector2i(x, y))
+			if ch == "e":
+				_spawn_enemy(x, y, centro)
+			elif ch == "M":
+				_spawn_boss(centro)
+			elif ch == "K":
+				_spawn_chest(centro)
+			elif ch == "V":
+				_spawn_heart(x, y, centro)
+			elif ch == "C":
+				_spawn_npc(centro)
+	_spawn_ally()
+
+
+func _spawn_enemy(x: int, y: int, centro: Vector2) -> void:
+	var k := "e_%d_%d_%d" % [zone, x, y]
+	if Game.has_flag(k):
+		return
+	var e = EnemyScript.new()
+	entities.add_child(e)
+	e.position = centro
+	e.setup(world, player, k, "res://assets/sprites/enemies/enemy_z%d.png" % zone, 2 + zone / 2, 26.0 + zone * 2.0)
+
+
+func _spawn_boss(centro: Vector2) -> void:
+	var dados: Dictionary = Zones.DATA[zone]["boss"]
+	if Game.has_flag("chefe_" + str(dados["key"])):
+		return
+	var b = BossScript.new()
+	entities.add_child(b)
+	b.position = centro
+	b.setup(world, player, self, dados, "res://assets/sprites/bosses/boss_z%d.png" % zone)
+	b.died.connect(_on_boss_died)
+	boss_node = b
+	hud.show_message(str(Zones.DATA[zone]["boss_intro"][0]), 3.0)
+
+
+func _spawn_chest(centro: Vector2) -> void:
+	var k := "bau_%d" % zone
+	var it = InteractableScript.new()
+	entities.add_child(it)
+	it.position = centro
+	it.setup("chest", k, self, player, "res://assets/sprites/items/chest_closed.png")
+	if Game.has_flag(k):
+		it.set_opened()
+	it.triggered.connect(_on_interact)
+
+
+func _spawn_heart(x: int, y: int, centro: Vector2) -> void:
+	var k := "coracao_%d_%d_%d" % [zone, x, y]
+	if Game.has_flag(k):
+		return
+	var it = InteractableScript.new()
+	entities.add_child(it)
+	it.position = centro
+	it.setup("heart", k, self, player, "res://assets/sprites/items/heart_container.png")
+	it.triggered.connect(_on_interact)
+
+
+func _spawn_npc(centro: Vector2) -> void:
+	var d: Dictionary = Zones.DATA[zone]
+	if str(d["ally_id"]) == "" or Game.has_flag("npc_%d" % zone):
+		return
+	var it = InteractableScript.new()
+	entities.add_child(it)
+	it.position = centro
+	it.setup("npc", "npc_%d" % zone, self, player, "res://assets/sprites/allies/ally_%s.png" % str(d["ally_id"]))
+	it.triggered.connect(_on_interact)
+
+
+func _spawn_ally() -> void:
+	if ally_node != null:
+		ally_node.queue_free()
+		ally_node = null
+	var id := Game.active_ally
+	if id == "":
+		return
+	var a = AllyScript.new()
+	entities.add_child(a)
+	a.position = player.position
+	a.setup(player, "res://assets/sprites/allies/ally_%s.png" % id)
+	ally_node = a
+
+
+# ---------- eventos ----------
+
+func _on_interact(node) -> void:
+	var d: Dictionary = Zones.DATA[zone]
+	if node.kind == "chest":
+		Game.set_flag(node.key)
+		node.set_opened()
+		if str(d["item"]) != "":
+			Game.give_item(str(d["item"]))
+			world.unlocked[str(d["item"])] = true
+			world.queue_redraw()
+			Game.save_game()
+			_say(["Você encontrou: %s." % str(d["item_label"]),
+				"Agora o caminho à frente pode ser atravessado."])
+	elif node.kind == "npc":
+		Game.set_flag(node.key)
+		Game.active_ally = str(d["ally_id"])
+		Game.save_game()
+		_say(["%s se junta a você." % str(d["ally_name"]),
+			"Ela segue você e ataca inimigos próximos."], Callable(self, "_after_recruit"))
+		node.remove_from_group("hurtable")
+		node.queue_free()
+	elif node.kind == "heart":
+		Game.max_hearts += 1
+		Game.hearts = Game.max_hearts
+		Game.set_flag(node.key)
+		Game.save_game()
+		hud.max_hearts = Game.max_hearts
+		hud.hearts = Game.hearts
+		hud.show_message("Coração extra! Vida máxima: %d" % Game.max_hearts)
+		node.queue_free()
+
+
+func _after_recruit() -> void:
+	_spawn_ally()
+
+
+func _on_boss_died() -> void:
+	boss_node = null
+	world.unlocked["porta"] = true
+	world.queue_redraw()
+	Game.save_game()
+	hud.show_message("O chefe caiu! A porta se abriu.", 3.0)
+	if zone == Zones.DATA.size() - 1:
+		ending_timer = 3.0
+
+
+func on_player_hit() -> void:
+	hud.hearts = Game.hearts
+	if Game.hearts <= 0:
+		hud.show_message("A colônia recua... você volta ao início do degrau.", 3.0)
+		Game.hearts = Game.max_hearts
+		_start_zone(zone)
+
+
+func on_door_reached() -> void:
+	if mode != "play" or not world.unlocked.has("porta"):
+		return
+	if zone < Zones.DATA.size() - 1:
+		_start_zone(zone + 1)
+	else:
+		_show_ending()
+
+
+func show_message(texto: String) -> void:
+	hud.show_message(texto, 3.0)
+
+
+# ---------- diálogo ----------
+
+func _say(linhas: Array, depois: Callable = Callable()) -> void:
+	Game.dialog_open = true
+	player.can_move = false
+	dialog_after = depois
+	hud.show_dialog(linhas)
+
+
+func _end_dialog() -> void:
+	Game.dialog_open = false
+	player.can_move = true
+	var f := dialog_after
+	dialog_after = Callable()
+	if f.is_valid():
+		f.call()

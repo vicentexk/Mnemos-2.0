@@ -1,0 +1,176 @@
+[
+  {
+    "arquivo": "assets/sprites/player/ant_player.png",
+    "tamanho": "16x16",
+    "uso": "Protagonista (formiga) em jogo",
+    "obs": "Reduzida da formiga aprovada"
+  },
+  {
+    "arquivo": "assets/sprites/allies/ally_tecela.png",
+    "tamanho": "16x16",
+    "uso": "Ajudante tecela",
+    "obs": "Recolorida da protagonista; comportamento genérico"
+  },
+  {
+    "arquivo": "assets/sprites/allies/ally_matabele.png",
+    "tamanho": "16x16",
+    "uso": "Ajudante matabele",
+    "obs": "Recolorida da protagonista; comportamento genérico"
+  },
+  {
+    "arquivo": "assets/sprites/allies/ally_cortadeira.png",
+    "tamanho": "16x16",
+    "uso": "Ajudante cortadeira",
+    "obs": "Recolorida da protagonista; comportamento genérico"
+  },
+  {
+    "arquivo": "assets/sprites/allies/ally_prata.png",
+    "tamanho": "16x16",
+    "uso": "Ajudante prata",
+    "obs": "Recolorida da protagonista; comportamento genérico"
+  },
+  {
+    "arquivo": "assets/sprites/allies/ally_bala.png",
+    "tamanho": "16x16",
+    "uso": "Ajudante bala",
+    "obs": "Recolorida da protagonista; comportamento genérico"
+  },
+  {
+    "arquivo": "assets/sprites/allies/ally_cefalote.png",
+    "tamanho": "16x16",
+    "uso": "Ajudante cefalote",
+    "obs": "Recolorida da protagonista; comportamento genérico"
+  },
+  {
+    "arquivo": "assets/sprites/enemies/enemy_z0.png",
+    "tamanho": "16x16",
+    "uso": "Inimigo comum da fase 1",
+    "obs": "Besouro desenhado por código"
+  },
+  {
+    "arquivo": "assets/sprites/enemies/enemy_z1.png",
+    "tamanho": "16x16",
+    "uso": "Inimigo comum da fase 2",
+    "obs": "Besouro desenhado por código"
+  },
+  {
+    "arquivo": "assets/sprites/enemies/enemy_z2.png",
+    "tamanho": "16x16",
+    "uso": "Inimigo comum da fase 3",
+    "obs": "Besouro desenhado por código"
+  },
+  {
+    "arquivo": "assets/sprites/enemies/enemy_z3.png",
+    "tamanho": "16x16",
+    "uso": "Inimigo comum da fase 4",
+    "obs": "Besouro desenhado por código"
+  },
+  {
+    "arquivo": "assets/sprites/enemies/enemy_z4.png",
+    "tamanho": "16x16",
+    "uso": "Inimigo comum da fase 5",
+    "obs": "Besouro desenhado por código"
+  },
+  {
+    "arquivo": "assets/sprites/enemies/enemy_z5.png",
+    "tamanho": "16x16",
+    "uso": "Inimigo comum da fase 6",
+    "obs": "Besouro desenhado por código"
+  },
+  {
+    "arquivo": "assets/sprites/enemies/enemy_z6.png",
+    "tamanho": "16x16",
+    "uso": "Inimigo comum da fase 7",
+    "obs": "Besouro desenhado por código"
+  },
+  {
+    "arquivo": "assets/sprites/bosses/boss_z0.png",
+    "tamanho": "32x32",
+    "uso": "Chefe da fase 1",
+    "obs": "Placeholder ampliado"
+  },
+  {
+    "arquivo": "assets/sprites/bosses/boss_z1.png",
+    "tamanho": "32x32",
+    "uso": "Chefe da fase 2",
+    "obs": "Placeholder ampliado"
+  },
+  {
+    "arquivo": "assets/sprites/bosses/boss_z2.png",
+    "tamanho": "32x32",
+    "uso": "Chefe da fase 3",
+    "obs": "Placeholder ampliado"
+  },
+  {
+    "arquivo": "assets/sprites/bosses/boss_z3.png",
+    "tamanho": "32x32",
+    "uso": "Chefe da fase 4",
+    "obs": "Placeholder ampliado"
+  },
+  {
+    "arquivo": "assets/sprites/bosses/boss_z4.png",
+    "tamanho": "32x32",
+    "uso": "Chefe da fase 5",
+    "obs": "Placeholder ampliado"
+  },
+  {
+    "arquivo": "assets/sprites/bosses/boss_z5.png",
+    "tamanho": "32x32",
+    "uso": "Chefe da fase 6",
+    "obs": "Placeholder ampliado"
+  },
+  {
+    "arquivo": "assets/sprites/bosses/boss_z6.png",
+    "tamanho": "32x32",
+    "uso": "Chefe da fase 7",
+    "obs": "Placeholder ampliado da formiga; a Pálida é translúcida"
+  },
+  {
+    "arquivo": "assets/sprites/tiles/tiles.png",
+    "tamanho": "224x16",
+    "uso": "Atlas de 14 tiles 16x16 (ordem em world.gd)",
+    "obs": "0 grama,1 caminho,2 parede,3 abismo,4 parede rachada,5 fosso de duna,6 penhasco,7 gelo aberto,8 porta fechada,9 chão de pedra,10 areia aberta,11 parede de gelo,12 porta aberta,13 degraus de pedra"
+  },
+  {
+    "arquivo": "assets/sprites/items/chest_closed.png",
+    "tamanho": "16x16",
+    "uso": "Baú com item",
+    "obs": "Placeholder"
+  },
+  {
+    "arquivo": "assets/sprites/items/chest_open.png",
+    "tamanho": "16x16",
+    "uso": "Baú aberto",
+    "obs": "Placeholder"
+  },
+  {
+    "arquivo": "assets/sprites/items/heart_container.png",
+    "tamanho": "16x16",
+    "uso": "Recipiente de coração (aumenta a vida máxima)",
+    "obs": "Placeholder"
+  },
+  {
+    "arquivo": "assets/sprites/ui/heart_full.png",
+    "tamanho": "8x8",
+    "uso": "HUD: coração cheio",
+    "obs": "Placeholder"
+  },
+  {
+    "arquivo": "assets/sprites/ui/heart_empty.png",
+    "tamanho": "8x8",
+    "uso": "HUD: coração vazio",
+    "obs": "Placeholder"
+  },
+  {
+    "arquivo": "assets/sprites/fx/projectile.png",
+    "tamanho": "6x6",
+    "uso": "Projétil de chefe (esporo/bruma)",
+    "obs": "Placeholder"
+  },
+  {
+    "arquivo": "assets/sprites/ui/app_icon_128.png",
+    "tamanho": "128x128",
+    "uso": "Ícone do app (rascunho)",
+    "obs": "Placeholder"
+  }
+]
