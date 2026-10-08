@@ -62,3 +62,18 @@ Repetir a etapa 4 para cada degrau. Manter o registro de itens, segredos e arcos
 ## Etapa 6 — Conteúdo opcional e acabamento
 
 Dungeons opcionais, acessibilidade, saves, balanceamento, desempenho no Android, créditos e integridade das builds.
+
+## Etapa 7 — Rodada 2: mundo aberto, combate e segredos (em andamento)
+
+Decisões confirmadas em 2026-10-08 (pelo usuário):
+
+| Item | Decisão | Status |
+|---|---|---|
+| Mundo | Mundo aberto único, estilo Zelda I; 7 degraus viram regiões | ⬜ a implementar |
+| Dungeons | 1 principal por degrau (obrigatória para subir); 5 opcionais; 1 por ajudante | ⬜ |
+| Ajudantes | Uma habilidade por ajudante, um ativo por vez | 🟡 proposta em [AJUDANTES_PROPOSTA.md](AJUDANTES_PROPOSTA.md), aguarda aprovação |
+| Combate | Polir combate contra inimigos e chefes (esquiva, empurrão, feedback, avisos) | ⬜ |
+| Visual | Imagem sem desfoque: escala inteira do Godot | 🟡 implementado (aguarda teste) |
+| Visual | Cor própria por degrau (provisória) | 🟡 implementado (aguarda teste) |
+| Fonte | Deltarune Regular (link do usuário), uso provisório | ⬜ falta baixar o arquivo; ver [LICENCAS_E_CREDITOS.md](LICENCAS_E_CREDITOS.md) |
+| Segredos | Mapa com segredos, pistas e itens escondidos | ⬜ |

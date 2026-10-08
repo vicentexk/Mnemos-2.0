@@ -45,3 +45,10 @@ Para cada arte, música ou som novo:
 4. **Arquivo original** guardado no workspace (ver [REGRAS_DE_TRABALHO.md](../REGRAS_DE_TRABALHO.md), seção 6).
 
 Arte e música produzidas no próprio projeto: registrar a autoria e a data, e manter o original.
+
+## Fonte Deltarune Regular (uso provisório)
+
+- **Origem:** "Deltarune Regular", por Retro Gaming (Copyright 2018), feita no FontStruct por siivagunner. Link: https://fontstruct.com/fontstructions/show/1577621/deltarune-1
+- **Licença:** FontStruct Non-Commercial License (**não comercial**). Não pode ser usada em build vendida ou com fins comerciais sem nova licença.
+- **Identidade:** a própria descrição da fonte diz que foi feita para o logo de Deltarune. Marca de terceiros. Antes de qualquer publicação, trocar por fonte com licença comercial.
+- **Status:** ainda **não baixada para o repositório** (o host de download não está liberado na sandbox). Decisão do usuário: usar agora e trocar depois, se preciso.
