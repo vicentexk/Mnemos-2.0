@@ -116,8 +116,8 @@ jobs:
 
   publicar:
     name: Publicar builds em apps/
-    # Só roda quando disparado manualmente (workflow_dispatch), para não versionar binários a cada push.
-    if: github.event_name == 'workflow_dispatch'
+    # Só roda quando o commit tem a marca [publicar] na mensagem, para não versionar binários a cada push.
+    if: contains(github.event.head_commit.message, '[publicar]')
     needs: [build]
     runs-on: ubuntu-latest
     permissions:
