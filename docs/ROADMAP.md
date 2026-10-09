@@ -72,7 +72,12 @@ Decisões confirmadas em 2026-10-08 (pelo usuário):
 | Mundo | Mundo aberto único, estilo Zelda I; 7 degraus viram regiões | ⬜ a implementar |
 | Dungeons | 1 principal por degrau (obrigatória para subir); 5 opcionais; 1 por ajudante | ⬜ |
 | Ajudantes | Uma habilidade por ajudante, um ativo por vez; ordem de recrutamento livre | ✅ aprovado ([AJUDANTES_PROPOSTA.md](AJUDANTES_PROPOSTA.md)) |
-| Fluxo | Formigueiro no centro; Névoa consome o degrau após a dungeon principal; fuga para o próximo | 🟡 decidido ([MUNDO_E_FLUXO.md](MUNDO_E_FLUXO.md)); duração e regra de captura em aberto |
+| Fuga da Névoa | Começa ao cair a dungeon principal; velocidade cresce por degrau; captura volta ao último monólito | 🟡 implementada (aguarda teste); números a balancear |
+| Formigueiro (centro do mundo) | Mapa central com entradas para os degraus | ⬜ próximo passo |
+| Habilidades dos ajudantes no mundo | Tecelã ponte, Matabele rocha, Cortadeira folhagem, Prata faro, Bala salto, Cefalote escudo | ⬜ não implementado |
+| Dungeons (principal, 5 opcionais, de ajudante) | Conteúdo e mapas | ⬜ não implementado |
+| Polimento do combate | Esquiva, empurrão, avisos | ⬜ não implementado |
+| Animações de quadros e sprites novos | Ver [SPRITES.md](SPRITES.md) | ⬜ só balanço provisório |
 | Combate | Polir combate contra inimigos e chefes (esquiva, empurrão, feedback, avisos) | ⬜ |
 | Visual | Imagem sem desfoque: escala inteira do Godot | 🟡 implementado (aguarda teste) |
 | Visual | Cor própria por degrau (provisória) | 🟡 implementado (aguarda teste) |

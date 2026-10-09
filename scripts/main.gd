@@ -26,6 +26,10 @@ var title_index := 0
 var menu_actions: Array = []
 var pending_spawn := Vector2(-1, -1)   # posição de retorno (monólito) para o próximo _build_zone
 var cutscene_index := 0
+# Fuga da Névoa: começa quando a dungeon principal do degrau cai. A frente sobe pela esquerda.
+var fuga_ativa := false
+var fuga_x := 0.0
+var fuga_vel := 0.0
 
 # Cutscene inicial do modo história (texto original, pt-BR).
 const CUTSCENE := [
@@ -88,6 +92,8 @@ func _process(delta: float) -> void:
 			if not hud.next_line():
 				_end_dialog()
 		return
+	if fuga_ativa:
+		_atualizar_fuga(delta)
 	if ending_timer > 0.0:
 		ending_timer -= delta
 		if ending_timer <= 0.0:
@@ -170,6 +176,7 @@ func _show_ending() -> void:
 
 func _start_zone(i: int) -> void:
 	mode = "play"
+	_encerrar_fuga()
 	hud.menu = []
 	hud.mode = "play"
 	zone = i
@@ -391,6 +398,40 @@ func _on_boss_died() -> void:
 	hud.show_message("O chefe caiu! A porta se abriu.", 3.0)
 	if zone == Zones.DATA.size() - 1:
 		ending_timer = 3.0
+	else:
+		_iniciar_fuga()
+
+
+# Velocidade da Névoa cresce a cada degrau (a montanha fica mais difícil).
+func _iniciar_fuga() -> void:
+	fuga_ativa = true
+	fuga_x = 0.0
+	fuga_vel = 22.0 + zone * 6.0
+	show_message("A Névoa começa a descer! Corra até a porta!", 3.0)
+
+
+func _encerrar_fuga() -> void:
+	fuga_ativa = false
+	queue_redraw()
+
+
+func _atualizar_fuga(delta: float) -> void:
+	if mode != "play" or Game.dialog_open:
+		return
+	fuga_x += fuga_vel * delta
+	queue_redraw()
+	if player.position.x < fuga_x + 4.0:
+		_encerrar_fuga()
+		_game_over()
+
+
+func _draw() -> void:
+	if not fuga_ativa:
+		return
+	# Névoa: faixa da borda esquerda até a frente, com borda mais clara.
+	var x0 := -400.0
+	draw_rect(Rect2(x0, -400, fuga_x - x0, 1200), Color(0.55, 0.55, 0.62, 0.8))
+	draw_rect(Rect2(fuga_x, -400, 6, 1200), Color(0.85, 0.85, 0.9, 0.5))
 
 
 func on_player_hit() -> void:
@@ -413,6 +454,7 @@ func _game_over() -> void:
 func on_door_reached() -> void:
 	if mode != "play" or not world.unlocked.has("porta"):
 		return
+	_encerrar_fuga()
 	if zone < Zones.DATA.size() - 1:
 		_start_zone(zone + 1)
 	else:
