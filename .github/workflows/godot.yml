@@ -22,6 +22,12 @@ jobs:
           unzip -q godot.zip
           mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot
           chmod +x godot
+      - name: Baixar fonte Deltarune (uso provisório)
+        run: |
+          if [ ! -f assets/fonts/Deltarune.ttf ]; then
+            curl -fsSL -o assets/fonts/Deltarune.ttf "https://drive.usercontent.google.com/download?id=1jQlpTlTpiU_blrGhbHMKJ3ezWiAeSd31&export=download" || true
+          fi
+          python3 -c "import os,sys; p='assets/fonts/Deltarune.ttf'; d=open(p,'rb').read(4) if os.path.exists(p) else b''; sys.exit(0 if d in (b'\x00\x01\x00\x00', b'OTTO', b'true') else 1)" || { echo "::warning::fonte Deltarune indisponível; usando KiwiSoda"; rm -f assets/fonts/Deltarune.ttf; }
       - name: Importar recursos
         run: |
           ./godot --headless --path . --import || true
@@ -82,6 +88,12 @@ jobs:
           EOT
           ls "$ANDROID_HOME/build-tools"
 
+      - name: Baixar fonte Deltarune (uso provisório)
+        run: |
+          if [ ! -f assets/fonts/Deltarune.ttf ]; then
+            curl -fsSL -o assets/fonts/Deltarune.ttf "https://drive.usercontent.google.com/download?id=1jQlpTlTpiU_blrGhbHMKJ3ezWiAeSd31&export=download" || true
+          fi
+          python3 -c "import os,sys; p='assets/fonts/Deltarune.ttf'; d=open(p,'rb').read(4) if os.path.exists(p) else b''; sys.exit(0 if d in (b'\x00\x01\x00\x00', b'OTTO', b'true') else 1)" || { echo "::warning::fonte Deltarune indisponível; usando KiwiSoda"; rm -f assets/fonts/Deltarune.ttf; }
       - name: Importar recursos
         run: |
           ./godot --headless --path . --import || true
@@ -136,11 +148,16 @@ jobs:
         with:
           name: Mnemos2-android-apk
           path: apps
-      - name: Commit em apps/
+      - name: Baixar fonte Deltarune
+        run: |
+          curl -fsSL -o assets/fonts/Deltarune.ttf "https://drive.usercontent.google.com/download?id=1jQlpTlTpiU_blrGhbHMKJ3ezWiAeSd31&export=download" || true
+          ls -la assets/fonts
+      - name: Commit em apps/ e fonte
         run: |
           ls -la apps
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -f apps/
-          git commit -m "Builds de teste em apps/ (${GITHUB_SHA::7})"
+          git add -f assets/fonts/Deltarune.ttf 2>/dev/null || true
+          git commit -m "Builds de teste em apps/ e fonte Deltarune (${GITHUB_SHA::7})"
           git push origin HEAD:${{ github.ref_name }}

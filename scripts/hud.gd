@@ -22,10 +22,12 @@ var tex_empty: Texture2D = null
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# Fonte: Deltarune (uso provisório, licença não comercial) se estiver no projeto; senão KiwiSoda.
 	font = ThemeDB.fallback_font
-	var kf := FontFile.new()
-	if kf.has_method("load_dynamic_font") and kf.load_dynamic_font("res://assets/fonts/KiwiSoda.ttf") == OK:
-		font = kf
+	for caminho in ["res://assets/fonts/Deltarune.ttf", "res://assets/fonts/KiwiSoda.ttf"]:
+		if ResourceLoader.exists(caminho):
+			font = load(caminho) as Font
+			break
 	tex_full = Game.load_tex("res://assets/sprites/ui/heart_full.png")
 	tex_empty = Game.load_tex("res://assets/sprites/ui/heart_empty.png")
 
