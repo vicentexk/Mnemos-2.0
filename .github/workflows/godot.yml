@@ -38,14 +38,7 @@ jobs:
           timeout 120 ./godot --headless --path . res://tests/smoke_test.tscn > smoke.txt 2>&1
           RC=$?
           set -e
-          python3 - <<'PY'
-import re
-t=open('smoke.txt',errors='replace').read()
-linhas=[l for l in t.splitlines() if l.strip() and not re.search(r'first_scan|API HASH|TextServer|udev|WorkerThread|Godot Engine v|Loading resource',l)]
-txt=' | '.join(linhas)[-8000:]
-for i in range(0,len(txt),900):
-    print('::error::'+txt[i:i+900])
-PY
+          python3 tools/ci_resumo.py smoke.txt
           exit $RC
       - name: Validar mapas
         run: |
