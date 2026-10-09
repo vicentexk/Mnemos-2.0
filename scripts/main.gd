@@ -461,8 +461,8 @@ func on_door_reached() -> void:
 		_show_ending()
 
 
-func show_message(texto: String) -> void:
-	hud.show_message(texto, 3.0)
+func show_message(texto: String, tempo := 3.0) -> void:
+	hud.show_message(texto, tempo)
 
 
 # ---------- diálogo ----------
